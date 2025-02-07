@@ -1,0 +1,39 @@
+{
+    "name": "livewirez/webauthn-laravel",
+    "description": "A laravel package for authenticating with webauthn passkeys on laravel applications",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Steve M",
+            "email": "steve@outlook.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Livewirez\\Webauthn\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "illuminate/auth": "^11.0|^12.0",
+        "illuminate/contracts": "^11.0|^12.0",
+        "illuminate/database": "^11.0|^12.0",
+        "illuminate/support": "^11.0|^12.0",
+        "illuminate/validation": "^11.0|^12.0",
+        "illuminate/http": "^11.0|^12.0",
+        "web-auth/webauthn-lib": "^5.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Livewirez\\Webauthn\\WebauthnServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
