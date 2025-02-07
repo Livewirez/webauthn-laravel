@@ -1,6 +1,6 @@
 {
     "name": "livewirez/webauthn-laravel",
-    "description": "A laravel package for authenticating with webauthn passkeys on laravel applications",
+    "description": "A laravel package for authenticating with webauthn passkeys on laravel applications.",
     "type": "library",
     "license": "MIT",
     "authors": [

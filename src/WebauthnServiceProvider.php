@@ -156,11 +156,11 @@ class WebauthnServiceProvider extends ServiceProvider
         if (app()->runningInConsole()) {
             $this->publishesMigrations([
                 __DIR__.'/../database/migrations' => database_path('migrations'),
-            ], 'webauthn-migrations');
+            ], 'webauthn-laravel-migrations');
 
             $this->publishes([
                 __DIR__.'/../config/webauthn.php' => config_path('webauthn.php'),
-            ], 'webauthn-config');
+            ], 'webauthn-laravel-config');
         }
     }
 
