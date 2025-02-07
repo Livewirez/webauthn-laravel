@@ -11,6 +11,10 @@ return [
 
     'override_listeners' => false,
 
+    'middleware' => ['web'],
+
+    'passkeys_table' => env('WEBAUTHN_PASSKEYS_TABLE', 'passkeys'),
+
     'credential_creation_options' => [
         'rp_entity' => [
             'name' => env('WEBAUTHN_RP_NAME', env('APP_NAME', 'Laravel')),

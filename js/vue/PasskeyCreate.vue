@@ -114,10 +114,10 @@ function startWebauthnPasskeyRegistration() {
                     <div class="flex-1 p-4">
                         <div class="flex justify-between items-center">
                             <div>
-                                <span class="text-gray-800 dark:text-gray-200">{{ $passkey.name ?? `Passkey #${i}` }}</span>
+                                <span class="text-gray-800 dark:text-gray-200">{{ passkey.name ?? `Passkey #${i}` }}</span>
                             
                                 <small v-if="passkey.last_used_at" class="ml-2 text-sm text-gray-600 dark:text-gray-300">
-                                    {{ $passkey.last_used_at }}
+                                    {{ passkey.last_used_at }}
                                 </small>
                             </div>
                         </div>
