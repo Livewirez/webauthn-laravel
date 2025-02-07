@@ -32,6 +32,13 @@ class Passkey extends Model
         'user_id',
     ];
 
+    public function __construct(array $attributes = []) 
+    {
+        parent::__construct($attributes); 
+
+        $this->setTable(config('test.tests_table')); 
+    }
+
     protected function casts(): array
     {
         return [
