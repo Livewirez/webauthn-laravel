@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Livewirez\Webauthn\Events\PasskeyLoginFailed;
+use Livewirez\Webauthn\Events\PasskeyLoginSuccess;
 
 class PasskeyGuard
 {
@@ -68,10 +70,14 @@ class PasskeyGuard
              
                 $this->login($user);
 
+                event(new PasskeyLoginSuccess($user, $this->name));
+
                 return true;
 
             } catch (\Throwable $th) {
                 $this->fireFailedEvent(null, $credentials);
+
+                event(new PasskeyLoginFailed($this->name, $credentials, null));
 
                 return false;
             }

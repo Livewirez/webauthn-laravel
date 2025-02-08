@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\ValidationException;
+use Livewirez\Webauthn\Events\PasskeyRegistered;
+use Livewirez\Webauthn\Events\PasskeyRegistrationFailed;
 
 class PasskeyController
 {
@@ -119,11 +121,14 @@ class PasskeyController
                 'passkey' => $passkey->only(['id', 'name', 'created_at'])
             ];
 
+            event(new PasskeyRegistered($request->user(), $passkey));
+
             return $request->expectsJson()
                 ? new JsonResponse($response)
                 : back()->with('success', $response['message']);
 
         } catch (ValidationException $e) {
+            event(new PasskeyRegistrationFailed($request->user()));
             throw $e;
         } catch (\Throwable $th) {
             return $this->handleError($request, $th);
@@ -139,6 +144,8 @@ class PasskeyController
      */
     private function handleError(Request $request, \Throwable $th)
     {
+        event(new PasskeyRegistrationFailed($request->user()));
+
         // Log the detailed error
         app(\Psr\Log\LoggerInterface::class)->error('Passkey registration failed', [
             'exception' => [
