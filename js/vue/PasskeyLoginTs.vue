@@ -4,7 +4,8 @@ import { ref } from 'vue';
 // npm install @simplewebauthn/browser
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
 
-import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/types';
+import type { PublicKeyCredentialRequestOptionsJSON } from '@simplewebauthn/browser';
+import { WebAuthnError } from '@simplewebauthn/browser';
 
 const working = ref<boolean>(false);
 const authentication_error = ref<string | null>(null);
@@ -15,7 +16,7 @@ function startWebauthnLogin() {
         working.value = true
 
         // Fetch authentication options
-        axios.get('/passkeys/generate-authentication-options')
+        window.axios.get('/passkeys/generate-authentication-options')
             .then(async (response) => {
                 console.log('Response:Login Options', response) 
 
@@ -26,9 +27,7 @@ function startWebauthnLogin() {
                     ) as PublicKeyCredentialRequestOptionsJSON;
 
                     // Start authentication process
-                    const authResponse = await startAuthentication(
-                        publicKeyCredentialRequestOptions
-                    );
+                    const authResponse = await startAuthentication({ optionsJSON: publicKeyCredentialRequestOptions });
 
                     // Log authentication response for debugging
                     console.log('Authentication Response:', {
@@ -37,7 +36,7 @@ function startWebauthnLogin() {
                     });
 
                     // Verify authentication with server
-                    const verificationResponse = await axios.post('/passkeys/verify-authentication', {
+                    const verificationResponse = await window.axios.post('/passkeys/verify-authentication', {
                         credentials: JSON.stringify(authResponse),
                         credentials_id: authResponse.id
                     });
@@ -54,7 +53,7 @@ function startWebauthnLogin() {
 
                     resolve(verificationResponse.data);
 
-                } catch (error) {
+                } catch (error: unknown) {
                     handleAuthenticationError(error, reject);
                 }
             })
@@ -63,25 +62,34 @@ function startWebauthnLogin() {
 }
             
 
-function handleAuthenticationError(error: Error|Record<string, any>, reject: Function) {
+function handleAuthenticationError(error: unknown, reject: Function) {
     let errorMessage = 'Authentication failed';
 
-    if (error.response?.data) {
+    // Check if error is an AxiosError with response data
+    if (error instanceof AxiosError && error.response?.data) {
         // Handle structured error responses
         errorMessage = extractErrorMessage(error.response.data);
-    } else if (error.name === 'NotAllowedError') {
-        errorMessage = 'Authentication was declined or timed out';
-    } else if (error.name === 'SecurityError') {
-        errorMessage = 'A security error occurred';
-    } else {
-        errorMessage = error.message || 'An unknown error occurred';
+    } 
+    // Handle WebAuthn specific errors
+    else if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+            errorMessage = 'Authentication was declined or timed out';
+        } else if (error.name === 'SecurityError') {
+            errorMessage = 'A security error occurred';
+        } else {
+            errorMessage = error.message || 'An unknown error occurred';
+        }
+    } 
+    // Fallback for any other type of error
+    else {
+        errorMessage = 'An unknown error occurred';
     }
 
     updateStoreWithError(errorMessage);
     reject(error);
 }
 
-function handleNetworkError(error: Error|Record<string, any>, reject: Function) {
+function handleNetworkError(error: Error | WebAuthnError | AxiosError, reject: Function) {
     console.error('Network error during authentication:', error);
     
     const errorMessage = 'Unable to connect to authentication service. Please try again.';
@@ -90,7 +98,7 @@ function handleNetworkError(error: Error|Record<string, any>, reject: Function) 
 }
 
 
-function extractErrorMessage(responseData: Record<string, any>) {
+function extractErrorMessage(responseData: any) {
     if (responseData.credentials) {
         return Array.isArray(responseData.credentials) 
             ? responseData.credentials[0] 
@@ -103,6 +111,7 @@ function updateStoreWithError(errorMessage: string) {
     working.value = false;
     authentication_error.value = errorMessage;
 }
+
 
 
 </script>

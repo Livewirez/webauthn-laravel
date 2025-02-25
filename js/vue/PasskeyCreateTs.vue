@@ -5,7 +5,7 @@ import { ref } from 'vue';
 // npm install @simplewebauthn/browser
 import { startRegistration, startAuthentication } from '@simplewebauthn/browser';
 
-import type { PublicKeyCredentialCreationOptionsJSON, AuthenticatorTransportFuture } from '@simplewebauthn/types';
+import type { PublicKeyCredentialCreationOptionsJSON, AuthenticatorTransportFuture } from '@simplewebauthn/browser';
 
 type PublicKeyCredentialSource = {
     id: number,
@@ -36,7 +36,7 @@ function startWebauthnPasskeyRegistration() {
         working.value = true
 
         // Fetch registration options
-        axios.get('/passkeys/generate-registration-options')
+        window.axios.get('/passkeys/generate-registration-options')
             .then(async (response) => {
                 console.log('Response:Registration Options', response)
                 try {
@@ -54,7 +54,7 @@ function startWebauthnPasskeyRegistration() {
                     console.log('AttestationResponse: ', r)
                     
                     // Send the response back to the server for verification
-                    const verificationResponse = await axios.post('/passkeys/verify-registration', { name: '', credentials: JSON.stringify(attResp) });
+                    const verificationResponse = await window.axios.post('/passkeys/verify-registration', { name: '', credentials: JSON.stringify(attResp) });
                     
                     // Reset working state and resolve
                     working.value = false
@@ -64,7 +64,7 @@ function startWebauthnPasskeyRegistration() {
                     resolve(verificationResponse?.data);
 
                     window.location.reload();
-                } catch (error) {
+                } catch (error: any) {
                     // Handle specific error types
                     let errorMessage = 'Unknown error occurred';
                     
