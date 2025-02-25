@@ -24,7 +24,6 @@ class WebauthnConfig extends Fluent
      */
     public static array $attestationResponseValidationFailedListeners = [];
 
-
     /**
      * Listeners for when the assertion response validation is succeeded.
      * 
@@ -38,10 +37,4 @@ class WebauthnConfig extends Fluent
      * @var (callable(\Webauthn\Event\AuthenticatorAssertionResponseValidationFailedEvent): void)[] 
      */
     public static array $assertionResponseValidationFailedListeners = [];
-
-    
-
-    
-
-
 }

@@ -194,8 +194,8 @@ class PasskeyController
         Gate::authorize('update', $passkey);
 
         $data = $request->validate([
-            'name' => [ 'required', 'string', 'max:255'],
-            'device_name' => [ 'nullable', 'string', 'max:255']
+            'name' => ['required', 'string', 'max:255'],
+            'device_name' => ['nullable', 'string', 'max:255']
         ]);
 
         $passkey->update($data);
@@ -218,6 +218,10 @@ class PasskeyController
     public function destroy(Request $request, Passkey $passkey)
     {
         Gate::authorize('delete', $passkey);
+
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        ]);
 
         $passkey->delete();
 

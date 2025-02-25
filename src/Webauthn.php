@@ -284,7 +284,6 @@ class Webauthn
         $authenticatorAssertionResponseValidator = $this->getAssertionResponseValidator();
 
         try {
-
             $publicKeyCredentialSource = $authenticatorAssertionResponseValidator->check(
                 $passkey->transformToWebauthnSource(),
                 $publicKeyCredential->response,
