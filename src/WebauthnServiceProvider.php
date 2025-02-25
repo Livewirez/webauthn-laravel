@@ -189,6 +189,14 @@ class WebauthnServiceProvider extends ServiceProvider
             Route::post('verify-registration', [PasskeyController::class, 'store'])
                 ->middleware(['web', 'auth']) 
                 ->name('webauthn.passkeys.store');
+
+            Route::get('passkey/{passkey}/update', [PasskeyController::class, 'update'])
+                ->middleware(['web', 'auth']) 
+                ->name('webauthn.passkeys.update_passkey');
+
+            Route::get('passkey/{passkey}/delete', [PasskeyController::class, 'destroy'])
+                ->middleware(['web', 'auth']) 
+                ->name('webauthn.passkeys.delete_passkey');
         });
     }
 

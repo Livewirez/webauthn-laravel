@@ -192,13 +192,43 @@ class PasskeyController
     public function update(Request $request, Passkey $passkey)
     {
         Gate::authorize('update', $passkey);
+
+        $data = $request->validate([
+            'name' => [ 'required', 'string', 'max:255'],
+            'device_name' => [ 'nullable', 'string', 'max:255']
+        ]);
+
+        $passkey->update($data);
+
+        $res = [
+            'message' => 'Passkey updated successfully',
+            'passkey' => $passkey->only(['id', 'name', 'device_name', 'updated_at'])
+        ];
+
+        if ($request->expectsJson()) {
+            return new JsonResponse($res);
+        }
+
+        return back()->with('success', $res['message']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Passkey $passkey)
+    public function destroy(Request $request, Passkey $passkey)
     {
         Gate::authorize('delete', $passkey);
+
+        $passkey->delete();
+
+        $res = [
+            'message' => 'Passkey deleted successfully'
+        ];
+
+        if ($request->expectsJson()) {
+            return new JsonResponse($res);
+        }
+
+        return back()->with('success', $res['message']);
     }
 }
