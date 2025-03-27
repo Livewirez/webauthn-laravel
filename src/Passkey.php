@@ -195,9 +195,10 @@ class Passkey extends Model
 
     public static function getDemormalizer(): PublicKeyCredentialSourceDenormalizer
     {
-        $normalizers = (fn () => $this->normalizers)->call($serializer = app()->make('webauthn_serializer'));
+        $denormalizer = new PublicKeyCredentialSourceDenormalizer();
+        $denormalizer->setDenormalizer($serializer = app()->make('webauthn_serializer'));
+        $denormalizer->setNormalizer($serializer);
 
-        return collect($normalizers)
-        ->filter(fn ($normalizer) => $normalizer instanceof PublicKeyCredentialSourceDenormalizer)->first();
+        return $denormalizer;
     }
 }
