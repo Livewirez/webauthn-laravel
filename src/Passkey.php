@@ -36,7 +36,7 @@ class Passkey extends Model
     {
         parent::__construct($attributes); 
 
-        $this->setTable(config('test.tests_table')); 
+        $this->setTable(config('webauthn.passkeys_table')); 
     }
 
     protected function casts(): array
