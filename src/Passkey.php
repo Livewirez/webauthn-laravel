@@ -63,12 +63,12 @@ class Passkey extends Model
 
     public static function encode(string $string): string
     {
-        return WebAuthn::encode($string);
+        return Webauthn::encode($string);
     }
 
     public static function decode(string $string): string
     {
-        return WebAuthn::decode($string);
+        return Webauthn::decode($string);
     }
 
     /**
