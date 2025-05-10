@@ -12,6 +12,19 @@ trait PasskeyManager
     {
         DB::transaction(function () {
 
+            switch (config('database.default')) {
+                case 'sqlite':
+                case 'pgsql':
+                    DB::statement(
+                        <<<'SQL'
+                            ALTER TABLE passkeys ADD COLUMN data JSON;
+                        SQL
+                    );
+                    break;
+                default:
+                    break;
+            }
+
             static::all()->each(function (Passkey $p) {
                 $source = $p->transformToWebauthnSource();
 
@@ -58,7 +71,7 @@ trait PasskeyManager
                         SQL
                     );
 
-                    $passkeys->each(fn (Passkey $p) => $p->save());
+                    $passkeys->each(fn (Passkey $p) => $p->create($p->toArray()));
                     break;
                 case 'mysql':
                     break;
