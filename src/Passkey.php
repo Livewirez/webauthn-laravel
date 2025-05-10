@@ -12,8 +12,6 @@ use Webauthn\Denormalizer\PublicKeyCredentialSourceDenormalizer;
 
 class Passkey extends Model
 {
-    use PasskeyManager;
-
     protected $fillable = [
         'name',
         'device_name',
@@ -35,12 +33,6 @@ class Passkey extends Model
     {
         return [
             'last_used_at' => 'datetime',
-            'transports' => 'json',
-            'other_ui' => 'json',
-            'trust_path' => 'json',
-            'backup_eligible' => 'boolean',
-            'backup_status' => 'boolean',
-            'uv_initialized' => 'boolean',
         ];
     }
 
