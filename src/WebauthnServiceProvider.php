@@ -49,18 +49,19 @@ class WebauthnServiceProvider extends ServiceProvider
     // create singleton classes
     public function register()
     {
-        $this->app->bind(SerializerInterface::class, function () {
+        $this->app->bind(WebauthnSerializerFactory::class, function () {
             // The manager will receive data to load and select the appropriate 
             $attestationStatementSupportManager = AttestationStatementSupportManager::create();
 
             $attestationStatementSupportManager->add(NoneAttestationStatementSupport::create());
 
-            $factory = new WebauthnSerializerFactory($attestationStatementSupportManager);
-
-            return $factory->create();
+            return new WebauthnSerializerFactory($attestationStatementSupportManager);
         });
 
-        $this->app->singleton('webauthn_serializer', fn (Application $app) => $app->make(SerializerInterface::class));
+        $this->app->singleton(
+            'webauthn_serializer',
+            fn (Application $app) => new Serializer($app->make(WebauthnSerializerFactory::class))
+        );
 
         $this->app->singleton(
             'webauthn_events', 
@@ -82,7 +83,7 @@ class WebauthnServiceProvider extends ServiceProvider
             Webauthn::class, 
             fn (Application $app) => new Webauthn(
                 $app,
-                $app->make(SerializerInterface::class),
+                $app->make('webauthn_serializer'),
                 new WebauthnConfig(config('webauthn'))
             )
         );

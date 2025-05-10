@@ -32,10 +32,15 @@ class PasskeyController
     {
         $credentials = $request->user()->passkeys()->get();
         $credentials = $credentials->map(static function (Passkey $source) {
-            $data = $source->only(['id', 'name', 'public_key_credential_id', 'counter', 'aaguid', 'user_handle', 'backup_status', 'backup_eligible', 'usage_count']);
-            $data['aaguid'] = Uuid::fromString($source->aaguid)->toRfc4122();
+            $data = $source->only(['id', 'name', 'public_key_credential_id', 'usage_count']);
+            $data['counter'] = $source->data->counter;
+            $data['aaguid'] = $source->data->aaguid;
+            $data['user_handle'] = $source->data->userHandle;
+            $data['backup_status'] = $source->data->backupStatus;
+            $data['backup_eligible'] = $source->data->backupEligible;
+            $data['aaguid'] = Uuid::fromString($source->data->aaguid)->toRfc4122();
             $data['public_key_credential_id_hex'] = bin2hex($data['public_key_credential_id']);
-            $data['last_used_at'] = $source->last_used_at ? (new \DateTimeImmutable($source->last_used_at))->format('j M Y, g:i a') : null;
+            $data['last_used_at'] = $source->last_used_at?->format('j M Y, g:i a');
 
             return (object) $data;
         });
@@ -105,12 +110,11 @@ class PasskeyController
             }
 
             // Create new passkey
-            $passkey = $request->user()->passkeys()->create(
-                array_merge(
-                    Passkey::fromWebauthnSource($publicKeyCredentialSource),
-                    ['name' => $request->input('name'), 'device_name' => $request->input('device_name')]
-                )
-            );
+            $passkey = $request->user()->passkeys()->create([
+                'name' => $request->input('name'), 
+                'device_name' => $request->input('device_name'), 
+                'data' => $publicKeyCredentialSource
+            ]);
 
             // Clear the session data
             $request->session()->forget($sessionKey);

@@ -203,9 +203,9 @@ class Webauthn
             $authenticatorSelectionCriteria,
             $this->config->get('credential_creation_options.attestation', 'none'), // "direct" | "enterprise" | "indirect" | "none",
             array_map(fn (Passkey $credential) => PublicKeyCredentialDescriptor::create(
-                $credential->type, 
+                $credential->data->type, 
                 static::decode($credential->public_key_credential_id), 
-                $credential->transports
+                $credential->data->transports
             ), $user->getPasskeys()),
             $this->config->get('credential_creation_options.timeout', 120000)
         );
@@ -285,7 +285,7 @@ class Webauthn
 
         try {
             $publicKeyCredentialSource = $authenticatorAssertionResponseValidator->check(
-                $passkey->transformToWebauthnSource(),
+                $passkey->data,
                 $publicKeyCredential->response,
                 $request_options,
                 $this->config->get('credential_request_options.rp_id'),
@@ -297,12 +297,11 @@ class Webauthn
             ]);
         }
 
-        $passkey->fillFromWebauthnSource($publicKeyCredentialSource)->update([
+        $passkey->update([
+            'data' => $publicKeyCredentialSource,
             'last_used_at' => now(),
             'usage_count' => ++$passkey->usage_count,
         ]);
-
-        $passkey->public_key_credential_source_object = $publicKeyCredentialSource;
 
         return $passkey;
     }
