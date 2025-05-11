@@ -20,7 +20,7 @@ class PasskeyGuard
         protected Webauthn $webauthn
     ) {}
 
-    public function __invoke(Request $request, ?UserProvider $provider): PasskeyUserEntityInterface
+    public function __invoke(Request $request, ?UserProvider $provider): PasskeyAuthenticatable
     {
         if (isset(static::$callback)) {
             return call_user_func(static::$callback, $request, $provider);

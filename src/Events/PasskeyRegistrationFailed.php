@@ -8,7 +8,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Livewirez\Webauthn\PasskeyUserEntityInterface;
+use Livewirez\Webauthn\PasskeyAuthenticatable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class PasskeyRegistrationFailed
@@ -18,7 +18,7 @@ class PasskeyRegistrationFailed
     /**
      * Create a new event instance.
      */
-    public function __construct(public PasskeyUserEntityInterface $user)
+    public function __construct(public PasskeyAuthenticatable $user)
     {
         //
     }

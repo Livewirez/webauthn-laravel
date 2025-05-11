@@ -9,7 +9,7 @@ class PasskeyPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(PasskeyUserEntityInterface $user): bool
+    public function viewAny(PasskeyAuthenticatable $user): bool
     {
         return false;
     }
@@ -17,7 +17,7 @@ class PasskeyPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(PasskeyUserEntityInterface $user, Passkey $passkey): bool
+    public function view(PasskeyAuthenticatable $user, Passkey $passkey): bool
     {
         return $passkey->passkey_user()->is($user);
     }
@@ -25,7 +25,7 @@ class PasskeyPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(PasskeyUserEntityInterface $user): bool
+    public function create(PasskeyAuthenticatable $user): bool
     {
         return false;
     }
@@ -33,7 +33,7 @@ class PasskeyPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(PasskeyUserEntityInterface $user, Passkey $passkey): bool
+    public function update(PasskeyAuthenticatable $user, Passkey $passkey): bool
     {
         return $passkey->passkey_user()->is($user);
     }
@@ -41,7 +41,7 @@ class PasskeyPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(PasskeyUserEntityInterface $user, Passkey $passkey): bool
+    public function delete(PasskeyAuthenticatable $user, Passkey $passkey): bool
     {
         return $passkey->passkey_user()->is($user);
     }
@@ -49,7 +49,7 @@ class PasskeyPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(PasskeyUserEntityInterface $user, Passkey $passkey): bool
+    public function restore(PasskeyAuthenticatable $user, Passkey $passkey): bool
     {
         return false;
     }
@@ -57,7 +57,7 @@ class PasskeyPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(PasskeyUserEntityInterface $user, Passkey $passkey): bool
+    public function forceDelete(PasskeyAuthenticatable $user, Passkey $passkey): bool
     {
         return false;
     }

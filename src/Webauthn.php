@@ -130,7 +130,7 @@ class Webauthn
         ); 
     }
 
-    public function getAuthenticationOptions(?PasskeyUserEntityInterface $user = null, bool $serialized = false)
+    public function getAuthenticationOptions(?PasskeyAuthenticatable $user = null, bool $serialized = false)
     {
         /** Args:
         *   `rp_id`: The Relying Party's unique identifier as specified in attestations.
@@ -159,7 +159,7 @@ class Webauthn
         return $serialized ? $this->serializeCredentialOptions($publicKeyCredentialRequestOptions) : $publicKeyCredentialRequestOptions;
     }
 
-    public function getCredentialOptionsForUser(PasskeyUserEntityInterface $user, bool $serialized = false)
+    public function getCredentialOptionsForUser(PasskeyAuthenticatable $user, bool $serialized = false)
     {
         // RP Entity i.e. the application
         $rpEntity = PublicKeyCredentialRpEntity::create(

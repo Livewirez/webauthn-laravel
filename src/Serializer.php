@@ -9,7 +9,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 
 class Serializer implements SerializerInterface
 {
-    public SerializerInterface $symfonySerializer;
+    protected SerializerInterface $symfonySerializer;
 
     public function __construct(
         protected WebauthnSerializerFactory $factory,
@@ -71,7 +71,6 @@ class Serializer implements SerializerInterface
     public function fromJson(string $value, string $desiredClass): mixed
     {
         return $this
-            ->symfonySerializer
             ->deserialize($value, $desiredClass, 'json');
     }
 } 

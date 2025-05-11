@@ -4,7 +4,7 @@ namespace Livewirez\Webauthn;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 
-trait PasskeyUserEntityTrait 
+trait PasskeyAuthenticatableTrait 
 {
     use HasPasskeys;
 
