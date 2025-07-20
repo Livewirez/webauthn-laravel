@@ -4,6 +4,7 @@ namespace Livewirez\Webauthn;
 
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Timebox;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
