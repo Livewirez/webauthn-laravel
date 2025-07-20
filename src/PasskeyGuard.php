@@ -17,8 +17,12 @@ class PasskeyGuard
     public static $callback;
 
     public function __construct(
-        protected Webauthn $webauthn
-    ) {}
+        protected Webauthn $webauthn,
+        protected ?Timebox $timebox = null,
+        int $timeboxDuration = 200000,
+    ) {
+        $this->timebox ??= new Timebox;
+    }
 
     public function __invoke(Request $request, ?UserProvider $provider): PasskeyAuthenticatable
     {
@@ -54,33 +58,45 @@ class PasskeyGuard
 
         return function (array $credentials) use ($webauthn) {
 
-            $this->fireAttemptEvent($credentials);
+            return $this->timebox->call(function (Timebox $timebox) use ($credentials, $webauthn) {
+                $this->fireAttemptEvent($credentials);
 
-            try {
-                $passkey = $webauthn->validateAssertionResponse(
-                    $credentials['credentials'], 
-                    $this->session->get($webauthn::PUBLIC_KEY_REQUEST_OPTIONS_SESSION_KEY)
-                );
-        
-                $this->lastAttempted = $user = $passkey->passkey_user()->firstOrFail();
+                try {
+                    $passkey = $webauthn->validateAssertionResponse(
+                        $credentials['credentials'], 
+                        $this->session->get($webauthn::PUBLIC_KEY_REQUEST_OPTIONS_SESSION_KEY)
+                    );
+            
+                    $this->lastAttempted = $user = $passkey->passkey_user()->firstOrFail();
 
-                if ($user) {
-                    $this->fireValidatedEvent($user);
+                    if ($user) {
+                        $this->fireValidatedEvent($user);
+
+                        $this->login($user);
+
+                        event(new PasskeyLoginSuccess($user, $this->name));
+
+                        $timebox->returnEarly();
+
+                        return true;
+                    }
+                 
+                   
+                    $this->fireFailedEvent($user, $credentials);
+
+                    event(new PasskeyLoginFailed($this->name, $credentials, $user));
+
+                    return false;
+
+                } catch (\Throwable $th) {
+                    $this->fireFailedEvent(null, $credentials);
+
+                    event(new PasskeyLoginFailed($this->name, $credentials, null));
+
+                    return false;
                 }
-             
-                $this->login($user);
 
-                event(new PasskeyLoginSuccess($user, $this->name));
-
-                return true;
-
-            } catch (\Throwable $th) {
-                $this->fireFailedEvent(null, $credentials);
-
-                event(new PasskeyLoginFailed($this->name, $credentials, null));
-
-                return false;
-            }
+            }, $this->timeboxDuration);
         };
     }
 }
