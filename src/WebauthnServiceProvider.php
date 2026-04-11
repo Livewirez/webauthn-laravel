@@ -178,10 +178,13 @@ class WebauthnServiceProvider extends ServiceProvider
                 ->middleware(['web', 'guest']) 
                 ->name('webauthn.passkeys.register_request_options');
     
-            Route::post(
-                'verify-authentication',
-                [PasskeyAuthenticatedSessionController::class, 'store']
-            )->middleware(['web', 'guest'])->name('webauthn.passkeys.login');
+
+            if (config('webauthn.enable_login_route')) {
+                Route::post(
+                    'verify-authentication',
+                    [PasskeyAuthenticatedSessionController::class, 'store']
+                )->middleware(['web', 'guest'])->name('webauthn.passkeys.login');
+            }
     
             Route::get('generate-registration-options', [PasskeyController::class, 'create'])
                 ->middleware(['web', 'auth']) 

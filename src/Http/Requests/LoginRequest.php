@@ -45,8 +45,8 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'credentials' => trans('auth.failed'),
-                'credentials_id' => trans('auth.failed'),
+                'credentials' => [trans('auth.failed')],
+                'credentials_id' => [trans('auth.failed')],
             ]);
         }
 
@@ -69,14 +69,14 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'credentials' => trans('auth.throttle', [
+            'credentials' => [trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
-            ]),
-            'credentials_id' => trans('auth.throttle', [
+            ])],
+            'credentials_id' => [trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
-            ]),
+            ])],
         ]);
     }
 

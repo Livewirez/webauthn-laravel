@@ -61,7 +61,10 @@ return [
             ['name' => 'loc', 'value' => true ],
             ['name' => 'txAuthSimple', 'value' => 'Please log in with a registered authenticator'],
         ]
-    ]
+    ],
 
-   
+    // In case you want 2FA with Laravel Fortify, you can disable the default login route and use the one provided by this package, which will work alongside 2FA.
+    // stops users bypassing 2FA if thy have stolen passkeys
+    'enable_login_route' => class_exists(\Laravel\Fortify\Features::class) && \Laravel\Fortify\Features::enabled(\Laravel\Fortify\Features::twoFactorAuthentication()) ? 
+        env('WEBAUTHN_ENABLE_LOGIN_ROUTE', false) : true,
 ];
