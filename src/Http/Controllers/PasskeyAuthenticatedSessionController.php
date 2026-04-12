@@ -9,6 +9,7 @@ use Livewirez\Webauthn\Webauthn;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
+use Livewirez\Webauthn\WebauthnConfig;
 use Illuminate\Support\Facades\Redirect;
 use \Symfony\Component\HttpFoundation\Response;
 use Livewirez\Webauthn\Http\Requests\LoginRequest;
@@ -41,14 +42,22 @@ class PasskeyAuthenticatedSessionController
 
         $request->session()->regenerate();
 
+        $url = null;
+
+        if (isset(WebauthnConfig::$passkeyRedirectRouteResolver) && is_callable(WebauthnConfig::$passkeyRedirectRouteResolver)) {
+            $url = call_user_func(WebauthnConfig::$passkeyRedirectRouteResolver);
+        } else {
+            $url = route(config('webauthn.login_redirect_route', 'dashboard'), absolute: false);
+        }
+
         if ($request->expectsJson()) {
             return new JsonResponse([
-                'redirect' => route('dashboard', absolute: false),
+                'redirect' => $url,
                 'status' => 302
             ], 200);
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended($url);
     }
 
     /**

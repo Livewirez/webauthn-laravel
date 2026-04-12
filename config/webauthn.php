@@ -63,6 +63,8 @@ return [
         ]
     ],
 
+    'login_redirect_route' => config('WEBAUTHN_LOGIN_REDIRECT_ROUTE', 'dashboard'),
+
     // In case you want 2FA with Laravel Fortify, you can disable the default login route and use the one provided by this package, which will work alongside 2FA.
     // stops users bypassing 2FA if thy have stolen passkeys
     'enable_login_route' => class_exists(\Laravel\Fortify\Features::class) && \Laravel\Fortify\Features::enabled(\Laravel\Fortify\Features::twoFactorAuthentication()) ? 

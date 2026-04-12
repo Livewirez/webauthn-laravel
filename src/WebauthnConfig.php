@@ -10,6 +10,12 @@ use Webauthn\Event\AuthenticatorAttestationResponseValidationSucceededEvent;
 
 class WebauthnConfig extends Fluent
 {
+
+    /**
+     * @var \Closure  
+     */
+    public static $passkeyRedirectRouteResolver;
+
     /**
      * Listeners for when the attestation response validation is succeeded.
      * 
