@@ -198,7 +198,7 @@ class WebauthnServiceProvider extends ServiceProvider
                 ->middleware(['web', 'auth']) 
                 ->name('webauthn.passkeys.update_passkey');
 
-            Route::delete('passkey/{passkey}/delete', [PasskeyController::class, 'destroy'])
+            Route::update('passkey/{passkey}/delete', [PasskeyController::class, 'destroy'])
                 ->middleware(['web', 'auth']) 
                 ->name('webauthn.passkeys.delete_passkey');
         });
