@@ -179,7 +179,7 @@ class WebauthnServiceProvider extends ServiceProvider
                 ->name('webauthn.passkeys.register_request_options');
     
 
-            if (config('webauthn.enable_login_route')) {
+            if (config('webauthn.enable_login_route', true)) {
                 Route::post(
                     'verify-authentication',
                     [PasskeyAuthenticatedSessionController::class, 'store']
