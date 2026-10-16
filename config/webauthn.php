@@ -69,4 +69,6 @@ return [
     // stops users bypassing 2FA if thy have stolen passkeys
     'enable_login_route' => class_exists(\Laravel\Fortify\Features::class) && \Laravel\Fortify\Features::enabled(\Laravel\Fortify\Features::twoFactorAuthentication()) ? 
         env('WEBAUTHN_ENABLE_LOGIN_ROUTE', false) : true,
+
+    'user_handle_secret' => env('PASSKEYS_USER_HANDLE_SECRET', config('app.key')),
 ];

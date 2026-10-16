@@ -20,7 +20,12 @@ trait PasskeyAuthenticatableTrait
 
     public function getId(): string 
     {
-        return (string) $this->id;
+        return hash_hmac(
+            'sha256',
+            $this->getTable().'|'.$this->getKey(),
+            config('passkeys.user_handle_secret'),
+            binary: true,
+        );
     }
 
     public function getIcon(): ?string 
