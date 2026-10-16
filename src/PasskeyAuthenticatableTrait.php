@@ -24,7 +24,6 @@ trait PasskeyAuthenticatableTrait
             'sha256',
             $this->getTable().'|'.$this->getKey(),
             config('passkeys.user_handle_secret'),
-            binary: true,
         );
     }
 
