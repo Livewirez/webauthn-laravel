@@ -2,6 +2,7 @@
 
 namespace Livewirez\Webauthn;
 
+use Webauthn\CredentialRecord;
 use Illuminate\Database\Eloquent\Model;
 use Webauthn\PublicKeyCredentialSource;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -43,9 +44,9 @@ class Passkey extends Model
         return new Attribute(
             get: fn (string $value) => $serializer->fromJson(
                 $value,
-                PublicKeyCredentialSource::class
+                CredentialRecord::class
             ),
-            set: fn (PublicKeyCredentialSource $value) => [
+            set: fn (CredentialRecord $value) => [
                 'public_key_credential_id' => static::encode($value->publicKeyCredentialId),
                 'trust_path_type' => get_class($value->trustPath),
                 'data' => $serializer->toJson($value),

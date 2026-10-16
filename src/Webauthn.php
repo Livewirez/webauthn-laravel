@@ -6,6 +6,7 @@ use Throwable;
 use Cose\Algorithms;
 use Webauthn\Util\Base64;
 use Psr\Log\LoggerInterface;
+use Webauthn\CredentialRecord;
 use Webauthn\PublicKeyCredential;
 use Webauthn\PublicKeyCredentialSource;
 use Illuminate\Support\Traits\Macroable;
@@ -213,7 +214,7 @@ class Webauthn
         return $serialized ? $this->serializeCredentialOptions($options) : $options;
     }
 
-    public function validateAttestationResponse(string $credentials, string|PublicKeyCredentialCreationOptions $creation_options): PublicKeyCredentialSource
+    public function validateAttestationResponse(string $credentials, string|PublicKeyCredentialCreationOptions $creation_options): CredentialRecord
     {
         $creation_options = is_string($creation_options) 
         ? $this->serializer->deserialize(
@@ -236,13 +237,13 @@ class Webauthn
         
         $authenticatorAttestationResponseValidator = $this->getAttestationResponseValidator();
         
-        $publicKeyCredentialSource = $authenticatorAttestationResponseValidator->check(
+        $credentialRecord = $authenticatorAttestationResponseValidator->check(
             $publicKeyCredential->response,
             $creation_options,
             $this->config->get('credential_creation_options.rp_entity.id')
         ); // Throws an Exception
 
-        return $publicKeyCredentialSource;
+        return $credentialRecord;
     }
 
 
@@ -284,7 +285,7 @@ class Webauthn
         $authenticatorAssertionResponseValidator = $this->getAssertionResponseValidator();
 
         try {
-            $publicKeyCredentialSource = $authenticatorAssertionResponseValidator->check(
+            $credentialRecord = $authenticatorAssertionResponseValidator->check(
                 $passkey->data,
                 $publicKeyCredential->response,
                 $request_options,
@@ -298,7 +299,7 @@ class Webauthn
         }
 
         $passkey->update([
-            'data' => $publicKeyCredentialSource,
+            'data' => $credentialRecord,
             'last_used_at' => now(),
             'usage_count' => ++$passkey->usage_count,
         ]);
